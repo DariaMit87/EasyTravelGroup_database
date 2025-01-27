@@ -1,0 +1,179 @@
+-- Table 1: User
+CREATE DATABASE EasyTravelGroup;
+\c easytravelgroup
+
+
+-- Table 1: User
+CREATE TABLE "User" (
+    user_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    account_role TEXT CHECK (account_role IN ('customer', 'travel agent', 'admin'))
+);
+
+-- Table 2: LoyaltyProgram (No foreign key yet)
+CREATE TABLE LoyaltyProgram (
+    membership_id SERIAL PRIMARY KEY,
+    customer_id INT UNIQUE,
+    available_points INT DEFAULT 0,
+    membership_start_date DATE NOT NULL,
+    membership_tier TEXT CHECK (membership_tier IN ('basic', 'gold', 'platinum'))
+);
+
+-- Table 3: Customer (No foreign key for membership_id yet)
+CREATE TABLE Customer (
+    customer_id INT PRIMARY KEY,
+    membership_id INT
+);
+
+-- Table 4: TravelAgent
+CREATE TABLE TravelAgent (
+    agent_id INT PRIMARY KEY,
+    agency_name VARCHAR(100) NOT NULL,
+    FOREIGN KEY (agent_id) REFERENCES "User"(user_id)
+);
+
+-- Table 5: Flight
+CREATE TABLE Flight (
+    flight_id SERIAL PRIMARY KEY,
+    airline_name VARCHAR(100) NOT NULL,
+    departure_location VARCHAR(100) NOT NULL,
+    arrival_location VARCHAR(100) NOT NULL,
+    departure_date_time TIMESTAMP NOT NULL,
+    arrival_date_time TIMESTAMP NOT NULL,
+    seat_capacity INT NOT NULL,
+    seat_class TEXT CHECK (seat_class IN ('economy', 'business', 'first_class')),
+    price_per_seat NUMERIC(10, 2) NOT NULL,
+    optional_services TEXT
+);
+
+-- Table 6: Accommodation
+CREATE TABLE Accommodation (
+    accommodation_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    location VARCHAR(100) NOT NULL,
+    type TEXT CHECK (type IN ('hotel', 'vacation_home')),
+    room_type VARCHAR(100) NOT NULL,
+    amenities TEXT,
+    seasonal_pricing NUMERIC(10, 2) NOT NULL,
+    base_price_per_night NUMERIC(10, 2) NOT NULL
+);
+
+-- Table 7: Transfer
+CREATE TABLE Transfer (
+    transfer_id SERIAL PRIMARY KEY,
+    transfer_type TEXT CHECK (transfer_type IN ('shared', 'private')),
+    price NUMERIC(10, 2) NOT NULL,
+    special_requests TEXT,
+    pickup_location VARCHAR(100) NOT NULL,
+    drop_off_location VARCHAR(100) NOT NULL
+);
+
+-- Table 8: Booking
+CREATE TABLE Booking (
+    booking_id SERIAL PRIMARY KEY,
+    customer_id INT NOT NULL,
+    travel_agent_id INT,
+    flight_id INT NOT NULL,
+    accommodation_id INT NOT NULL,
+    transfer_id INT,
+    booking_date TIMESTAMP NOT NULL,
+    total_price NUMERIC(10, 2) NOT NULL,
+    payment_id INT,
+    refund_status BOOLEAN DEFAULT FALSE
+);
+
+-- Table 9: Feedback
+CREATE TABLE Feedback (
+    feedback_id SERIAL PRIMARY KEY,
+    booking_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    rating SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    comments TEXT,
+    feedback_type TEXT CHECK (feedback_type IN ('flight', 'accommodation', 'destination', 'service'))
+);
+
+-- Table 10: Payment
+CREATE TABLE Payment (
+    payment_id SERIAL PRIMARY KEY,
+    booking_id INT NOT NULL UNIQUE,
+    payment_method TEXT CHECK (payment_method IN ('credit_card', 'bank_transfer', 'loyalty_points')),
+    amount NUMERIC(10, 2) NOT NULL,
+    payment_date TIMESTAMP NOT NULL,
+    refund_status BOOLEAN DEFAULT FALSE
+);
+
+-- Table 11: HolidayPackage
+CREATE TABLE HolidayPackage (
+    package_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    included_destinations TEXT NOT NULL,
+    base_price NUMERIC(10, 2) NOT NULL,
+    seasonal_pricing NUMERIC(10, 2) NOT NULL,
+    discounts NUMERIC(10, 2),
+    optional_add_ons TEXT
+);
+
+
+-- Add foreign keys to Customer
+ALTER TABLE Customer
+ADD FOREIGN KEY (customer_id) REFERENCES "User"(user_id),
+ADD FOREIGN KEY (membership_id) REFERENCES LoyaltyProgram(membership_id) ON DELETE SET NULL;
+
+-- Add foreign keys to LoyaltyProgram
+ALTER TABLE LoyaltyProgram
+ADD FOREIGN KEY (customer_id) REFERENCES Customer(customer_id);
+
+-- Add foreign keys to Booking
+ALTER TABLE Booking
+ADD FOREIGN KEY (customer_id) REFERENCES Customer(customer_id),
+ADD FOREIGN KEY (travel_agent_id) REFERENCES TravelAgent(agent_id),
+ADD FOREIGN KEY (flight_id) REFERENCES Flight(flight_id),
+ADD FOREIGN KEY (accommodation_id) REFERENCES Accommodation(accommodation_id),
+ADD FOREIGN KEY (transfer_id) REFERENCES Transfer(transfer_id),
+ADD FOREIGN KEY (payment_id) REFERENCES Payment(payment_id);
+
+-- Add foreign keys to Feedback
+ALTER TABLE Feedback
+ADD FOREIGN KEY (booking_id) REFERENCES Booking(booking_id),
+ADD FOREIGN KEY (customer_id) REFERENCES Customer(customer_id);
+
+-- Add foreign keys to Payment
+ALTER TABLE Payment
+ADD FOREIGN KEY (booking_id) REFERENCES Booking(booking_id);
+
+
+
+-- Create roles for different types of users
+CREATE ROLE admin;
+CREATE ROLE travel_agent;
+CREATE ROLE customer;
+
+-- Grant full access to admin
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO admin;
+
+-- Grant permissions to travel_agent
+GRANT SELECT, INSERT, UPDATE, DELETE ON Booking TO travel_agent;
+GRANT SELECT ON Flight, Accommodation, Transfer TO travel_agent;
+
+
+-- Grant permissions to customer
+GRANT SELECT ON "User" TO customer;
+GRANT SELECT ON Booking, Feedback, LoyaltyProgram TO customer;
+
+
+CREATE USER daria_admin WITH PASSWORD '1234';
+CREATE USER bill_agent WITH PASSWORD '5678';
+CREATE USER anna_customer WITH PASSWORD '9999';
+
+GRANT admin TO daria_admin;
+GRANT travel_agent TO bill_agent;
+GRANT customer TO anna_customer;
+
+REVOKE ALL ON DATABASE easytravelgroup FROM PUBLIC;
+
+ALTER ROLE admin WITH LOGIN;
+ALTER ROLE customer WITH LOGIN;
+ALTER ROLE travel_agent WITH LOGIN;
