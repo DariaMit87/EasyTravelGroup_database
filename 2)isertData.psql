@@ -1,0 +1,296 @@
+INSERT INTO Customer (name, email) VALUES
+('Alice Smith', 'alice@example.com'),
+('Bob Johnson', 'bob@example.com'),
+('Charlie Brown', 'charlie@example.com'),
+('Diana Prince', 'diana@example.com'),
+('Ethan Hunt', 'ethan@example.com'),
+('Fiona Gallagher', 'fiona@example.com'),
+('George Clooney', 'george@example.com'),
+('Harry Potter', 'harry@example.com'),
+('Ivy Walker', 'ivy@example.com'),
+('Jack Sparrow', 'jack@example.com'),
+('Katherine Pierce', 'katherine@example.com'),
+('Leo DiCaprio', 'leo@example.com'),
+('Mia Wallace', 'mia@example.com'),
+('Nathan Drake', 'nathan@example.com'),
+('Olivia Benson', 'olivia@example.com'),
+('Patrick Bateman', 'patrick@example.com'),
+('Quentin Tarantino', 'quentin@example.com'),
+('Rachel Green', 'rachel@example.com'),
+('Steve Rogers', 'steve@example.com'),
+('Tony Stark', 'tony@example.com'),
+('Ursula Buffay', 'ursula@example.com'),
+('Vin Diesel', 'vin@example.com'),
+('Wanda Maximoff', 'wanda@example.com'),
+('Xander Cage', 'xander@example.com'),
+('Yasmine Bleeth', 'yasmine@example.com'),
+('Zane Truesdale', 'zane@example.com'),
+('Arthur Morgan', 'arthur@example.com'),
+('Bridget Jones', 'bridget@example.com'),
+('Chandler Bing', 'chandler@example.com'),
+('Anna Karenina', 'anna@example.com');
+
+-- Insert Regular Customers (Half of Customers)
+INSERT INTO Regular_Customer (customer_id)
+SELECT customer_id FROM Customer WHERE customer_id % 2 = 0;
+
+-- Insert Loyalty Customers (Other Half)
+INSERT INTO Loyalty_Program (customer_id, membership_tier, available_points)
+SELECT 
+    customer_id, 
+    CASE 
+        WHEN random() < 0.33 THEN 'Silver' 
+        WHEN random() < 0.66 THEN 'Gold' 
+        ELSE 'Platinum' 
+    END AS membership_tier,
+    FLOOR(random() * 1000) AS available_points
+FROM Customer;
+
+-- Insert Loyalty Customers
+INSERT INTO Loyalty_Customer (customer_id, membership_id)
+SELECT customer_id, membership_id FROM Loyalty_Program;
+
+
+INSERT INTO Travel_Agent (name, email, agency_name, clients_managed)
+VALUES
+('Agent Smith', 'smith@travel.com', 'Matrix Travels', 10),
+('Lara Croft', 'lara@explorer.com', 'Adventure Seekers', 15),
+('James Bond', 'james@mi6.com', 'Secret Travels', 5),
+('Indiana Jones', 'indy@archaeo.com', 'Lost Expeditions', 7),
+('Ellen Ripley', 'ellen@weyland.com', 'Space Voyages', 12),
+('Han Solo', 'han@falcon.com', 'Smuggler Tours', 8),
+('Rick Deckard', 'rick@blade.com', 'Future Travels', 9),
+('Trinity', 'trinity@matrix.com', 'Cyber Trips', 6),
+('Neo Anderson', 'neo@matrix.com', 'Reality Break', 14),
+('Sarah Connor', 'sarah@skynet.com', 'Dystopia Getaways', 11),
+('Dom Cobb', 'dom@dream.com', 'Mind Travel', 10),
+('Walter White', 'walter@meth.com', 'Breaking Trips', 4),
+('Saul Goodman', 'saul@goodman.com', 'Legal Travels', 7),
+('Michael Scofield', 'michael@escape.com', 'Prison Break Adventures', 5),
+('Sherlock Holmes', 'sherlock@detect.com', 'Mystery Travels', 13),
+('John Wick', 'john@baba.com', 'Assassin Getaways', 8),
+('Dexter Morgan', 'dexter@serial.com', 'Dark Trips', 6),
+('Tony Montana', 'tony@scarface.com', 'Miami Lux', 9),
+('Frank Castle', 'frank@punisher.com', 'Vengeance Travels', 7),
+('Daryl Dixon', 'daryl@apocalypse.com', 'Survival Tours', 11),
+('Jack Bauer', 'jack@ctu.com', 'Terrorist Escape', 12),
+('MacGyver', 'mac@fix.com', 'DIY Travels', 15),
+('Hannibal Lecter', 'hannibal@cannibal.com', 'Fine Dining Journeys', 6),
+('Gordon Gekko', 'gordon@greed.com', 'Finance Lux', 9),
+('Jordan Belfort', 'jordan@wolf.com', 'Luxury Fraud Tours', 4),
+('Forrest Gump', 'forrest@run.com', 'Runaway Adventures', 10),
+('Homer Simpson', 'homer@duff.com', 'Duff Beer Trips', 8),
+('Peter Griffin', 'peter@family.com', 'Road to Quahog', 7),
+('Stan Smith', 'stan@cia.com', 'CIA Missions', 5),
+('Eric Cartman', 'eric@southpark.com', 'Offensive Travels', 6);
+
+-- Insert 30 Travel Services
+INSERT INTO Travel_Service (service_type)
+SELECT CASE 
+         WHEN service_id % 3 = 0 THEN 'Flight'
+         WHEN service_id % 2 = 0 THEN 'Accommodation'
+         ELSE 'Transfer'
+       END
+FROM generate_series(1,30) AS service_id;
+
+INSERT INTO Flight (service_id, airline_name, departure_location, arrival_location, departure_date_time, seat_capacity, price_per_seat, optional_services) VALUES
+(1, 'Airways A1', 'New York', 'London', '2025-02-01 08:30:00', 200, 350.00, 'Extra Luggage'),
+(2, 'Airways B2', 'Los Angeles', 'Tokyo', '2025-02-02 10:00:00', 220, 450.00, 'Priority Check-in'),
+(3, 'Airways C3', 'Paris', 'Berlin', '2025-02-03 12:15:00', 180, 200.00, 'Meal Included'),
+(4, 'Airways D4', 'Dubai', 'Mumbai', '2025-02-04 14:45:00', 250, 380.00, 'Extra Legroom'),
+(5, 'Airways E5', 'Chicago', 'Miami', '2025-02-05 16:20:00', 190, 150.00, 'Window Seat Preferred'),
+(6, 'Airways F6', 'Sydney', 'Singapore', '2025-02-06 18:50:00', 210, 320.00, 'Lounge Access'),
+(7, 'Airways G7', 'Toronto', 'Vancouver', '2025-02-07 20:30:00', 230, 220.00, 'Extra Baggage'),
+(8, 'Airways H8', 'Rome', 'Madrid', '2025-02-08 22:00:00', 200, 180.00, 'In-flight Entertainment'),
+(9, 'Airways I9', 'Hong Kong', 'Seoul', '2025-02-09 23:45:00', 240, 290.00, 'WiFi Access'),
+(10, 'Airways J10', 'Bangkok', 'Jakarta', '2025-02-10 06:30:00', 210, 260.00, 'Business Lounge Access'),
+(11, 'Airways K11', 'San Francisco', 'Honolulu', '2025-02-11 09:00:00', 250, 410.00, 'Extra Baggage'),
+(12, 'Airways L12', 'Boston', 'Dallas', '2025-02-12 11:20:00', 180, 170.00, 'In-flight Meals'),
+(13, 'Airways M13', 'Frankfurt', 'Amsterdam', '2025-02-13 13:10:00', 200, 195.00, 'Extra Legroom'),
+(14, 'Airways N14', 'Beijing', 'Shanghai', '2025-02-14 15:40:00', 220, 285.00, 'WiFi Access'),
+(15, 'Airways O15', 'Istanbul', 'Athens', '2025-02-15 18:10:00', 240, 300.00, 'Priority Check-in'),
+(16, 'Airways P16', 'Dubai', 'Cape Town', '2025-02-16 21:30:00', 200, 500.00, 'Lounge Access'),
+(17, 'Airways Q17', 'Melbourne', 'Bali', '2025-02-17 23:20:00', 190, 260.00, 'Extra Baggage'),
+(18, 'Airways R18', 'Las Vegas', 'Denver', '2025-02-18 07:40:00', 210, 190.00, 'WiFi Access'),
+(19, 'Airways S19', 'Toronto', 'New York', '2025-02-19 10:50:00', 220, 240.00, 'Business Lounge'),
+(20, 'Airways T20', 'Tokyo', 'Osaka', '2025-02-20 13:00:00', 250, 310.00, 'Priority Boarding'),
+(21, 'Airways U21', 'Vienna', 'Prague', '2025-02-21 16:20:00', 180, 185.00, 'Extra Legroom'),
+(22, 'Airways V22', 'Mexico City', 'Bogota', '2025-02-22 19:40:00', 240, 350.00, 'WiFi Access'),
+(23, 'Airways W23', 'Los Angeles', 'Sydney', '2025-02-23 22:10:00', 250, 600.00, 'Extra Baggage'),
+(24, 'Airways X24', 'Rio de Janeiro', 'Buenos Aires', '2025-02-24 09:30:00', 200, 270.00, 'In-flight Entertainment'),
+(25, 'Airways Y25', 'Johannesburg', 'Nairobi', '2025-02-25 12:15:00', 220, 330.00, 'Business Lounge'),
+(26, 'Airways Z26', 'London', 'Paris', '2025-02-26 15:00:00', 230, 210.00, 'Priority Check-in'),
+(27, 'Airways AA27', 'Chicago', 'San Diego', '2025-02-27 18:45:00', 200, 280.00, 'Extra Legroom'),
+(28, 'Airways BB28', 'Rome', 'Barcelona', '2025-02-28 22:30:00', 180, 190.00, 'WiFi Access'),
+(29, 'Airways CC29', 'Seoul', 'Hong Kong', '2025-03-01 06:15:00', 240, 295.00, 'Extra Baggage'),
+(30, 'Airways DD30', 'Singapore', 'Bangkok', '2025-03-02 09:50:00', 210, 250.00, 'In-flight Meals');
+
+///
+
+INSERT INTO Accommodation (service_id, name, location, type, room_type, price_per_night, add_ons)
+VALUES
+(1, 'Oceanview Resort', 'Maldives', 'Resort', 'Deluxe Suite', 500.00, 'Spa, Breakfast included'),
+(2, 'Mountain Lodge', 'Swiss Alps', 'Hotel', 'Standard Room', 250.00, 'Free WiFi'),
+(3, 'City Center Apartments', 'New York', 'Apartment', '1-Bedroom', 150.00, 'Gym access'),
+(4, 'Luxury Palace', 'Dubai', 'Hotel', 'Presidential Suite', 1500.00, 'Private Pool'),
+(5, 'Beachfront Paradise', 'Bora Bora', 'Resort', 'Overwater Bungalow', 1200.00, 'All-inclusive'),
+(6, 'Desert Oasis', 'Arizona', 'Hotel', 'King Room', 350.00, 'Breakfast included'),
+(7, 'Forest Retreat', 'Oregon', 'Vacation Home', '3-Bedroom Cabin', 400.00, 'Pet Friendly'),
+(8, 'Downtown Executive Suites', 'Los Angeles', 'Hotel', 'Executive Room', 550.00, 'Rooftop Bar'),
+(9, 'Chateau de Bordeaux', 'France', 'Hotel', 'Luxury Suite', 800.00, 'Wine Tasting'),
+(10, 'Seaside Escape', 'California', 'Resort', 'Oceanfront Room', 900.00, 'Private Beach'),
+(11, 'Mountainview Lodge', 'Colorado', 'Resort', 'King Room', 450.00, 'Hiking Trails'),
+(12, 'Urban Loft', 'Berlin', 'Apartment', 'Studio', 180.00, 'City View'),
+(13, 'Tropical Haven', 'Hawaii', 'Vacation Home', 'Villa', 700.00, 'Snorkeling Equipment'),
+(14, 'Historic Inn', 'London', 'Hotel', 'Queen Room', 220.00, 'Free Afternoon Tea'),
+(15, 'Savannah Springs', 'Georgia', 'Resort', 'Luxury Cabin', 600.00, 'Golf Course'),
+(16, 'Swiss Chalet', 'Switzerland', 'Hotel', 'Junior Suite', 350.00, 'Sauna'),
+(17, 'Art Deco Apartments', 'Miami', 'Apartment', 'Penthouse', 800.00, 'Private Pool'),
+(18, 'Canyon Lodge', 'Utah', 'Hotel', 'Double Room', 200.00, 'Mountain Views'),
+(19, 'Riverside Retreat', 'Canada', 'Resort', 'Luxury Suite', 750.00, 'Canoeing'),
+(20, 'The Grand Palace', 'New York', 'Hotel', 'Royal Suite', 2000.00, 'Private Concierge'),
+(21, 'Skyline Towers', 'Chicago', 'Apartment', '2-Bedroom', 280.00, 'Gym, Pool'),
+(22, 'Jungle Paradise', 'Costa Rica', 'Resort', 'Treehouse', 600.00, 'Zip Line'),
+(23, 'Old Town Suites', 'Rome', 'Hotel', 'Superior Room', 300.00, 'Breakfast Buffet'),
+(24, 'Beachfront Villas', 'Thailand', 'Vacation Home', '2-Bedroom Villa', 650.00, 'Private Chef'),
+(25, 'Snowy Peaks Lodge', 'Alaska', 'Resort', 'Mountain View Room', 500.00, 'Skiing'),
+(26, 'Desert Retreat', 'Morocco', 'Hotel', 'Luxury Room', 400.00, 'Yoga Classes'),
+(27, 'City Gardens', 'Paris', 'Apartment', 'Loft', 220.00, 'Eiffel Tower View'),
+(28, 'Royal Ocean Resort', 'Greece', 'Resort', 'Suite', 850.00, 'Private Yacht'),
+(29, 'Tuscany Hills Retreat', 'Italy', 'Vacation Home', 'Villa', 750.00, 'Cooking Classes'),
+(30, 'Sunset Resort', 'Jamaica', 'Resort', 'Beachfront Villa', 950.00, 'Snorkeling');
+
+INSERT INTO Transfer (service_id, transfer_type, price, pickup_location, drop_off_location, special_requests)
+VALUES
+(1, 'Shared', 50.00, 'Airport', 'Hotel', 'None'),
+(2, 'Private', 200.00, 'Airport', 'Hotel', 'Wheelchair access'),
+(3, 'Private', 150.00, 'Train Station', 'Resort', 'Luggage assistance'),
+(4, 'Shared', 30.00, 'Airport', 'Downtown', 'None'),
+(5, 'Private', 180.00, 'Hotel', 'Beach', 'Pet Friendly'),
+(6, 'Shared', 40.00, 'Airport', 'Cruise Port', 'None'),
+(7, 'Private', 220.00, 'Airport', 'Mountain Lodge', 'Luggage assistance'),
+(8, 'Shared', 35.00, 'Hotel', 'Airport', 'None'),
+(9, 'Private', 250.00, 'Train Station', 'Luxury Resort', 'Child seat required'),
+(10, 'Shared', 45.00, 'Airport', 'Train Station', 'None'),
+(11, 'Private', 100.00, 'Hotel', 'Ski Resort', 'Ski equipment'),
+(12, 'Shared', 60.00, 'Cruise Port', 'Hotel', 'None'),
+(13, 'Private', 170.00, 'Airport', 'Mountain Retreat', 'Wheelchair access'),
+(14, 'Shared', 40.00, 'Downtown', 'Airport', 'None'),
+(15, 'Private', 130.00, 'Hotel', 'City Center', 'Luggage assistance'),
+(16, 'Shared', 25.00, 'Airport', 'Hotel', 'None'),
+(17, 'Private', 140.00, 'Cruise Port', 'Airport', 'None'),
+(18, 'Shared', 30.00, 'Train Station', 'Resort', 'None'),
+(19, 'Private', 200.00, 'Hotel', 'Airport', 'Luggage assistance'),
+(20, 'Shared', 55.00, 'Hotel', 'Beach', 'None'),
+(21, 'Private', 160.00, 'Airport', 'Luxury Hotel', 'Child seat required'),
+(22, 'Shared', 50.00, 'Train Station', 'Hotel', 'None'),
+(23, 'Private', 180.00, 'Hotel', 'Mountain Resort', 'Pet Friendly'),
+(24, 'Shared', 45.00, 'Airport', 'Cruise Port', 'None'),
+(25, 'Private', 210.00, 'Hotel', 'Ski Resort', 'Luggage assistance'),
+(26, 'Shared', 40.00, 'Airport', 'Downtown', 'None'),
+(27, 'Private', 200.00, 'Hotel', 'Airport', 'Luggage assistance'),
+(28, 'Shared', 60.00, 'Train Station', 'Hotel', 'None'),
+(29, 'Private', 250.00, 'Airport', 'Luxury Resort', 'Wheelchair access'),
+(30, 'Shared', 50.00, 'Hotel', 'Beach', 'None');
+
+SELECT setval(pg_get_serial_sequence('Booking', 'booking_id'), 1, false);
+
+INSERT INTO Booking (customer_id, agent_id, service_id, number_of_days, seat_class, points_earned, total_price)
+VALUES
+(1, 1, 1, 7, 'Economy', 100, 3500.00),
+(2, 2, 2, 3, 'Business', 50, 750.00),
+(3, 3, 3, 5, 'First Class', 120, 2000.00),
+(4, 4, 4, 10, 'Economy', 150, 15000.00),
+(5, 5, 5, 4, 'Business', 80, 3200.00),
+(6, 6, 6, 7, 'Economy', 200, 3500.00),
+(7, 7, 7, 14, 'First Class', 300, 5600.00),
+(8, 8, 8, 2, 'Economy', 50, 1100.00),
+(9, 9, 9, 5, 'Business', 70, 3500.00),
+(10, 10, 10, 7, 'Economy', 120, 6300.00),
+(11, 11, 11, 3, 'Economy', 60, 1050.00),
+(12, 12, 12, 7, 'First Class', 200, 4900.00),
+(13, 13, 13, 4, 'Business', 100, 2800.00),
+(14, 14, 14, 5, 'Economy', 50, 1500.00),
+(15, 15, 15, 6, 'First Class', 150, 3000.00),
+(16, 16, 16, 8, 'Economy', 110, 8800.00),
+(17, 17, 17, 2, 'Business', 60, 1200.00),
+(18, 18, 18, 9, 'Economy', 90, 4500.00),
+(19, 19, 19, 5, 'First Class', 200, 5000.00),
+(20, 20, 20, 4, 'Business', 80, 3200.00),
+(21, 21, 21, 6, 'Economy', 130, 7800.00),
+(22, 22, 22, 5, 'First Class', 150, 5000.00),
+(23, 23, 23, 3, 'Economy', 60, 1800.00),
+(24, 24, 24, 7, 'Business', 100, 3500.00),
+(25, 25, 25, 6, 'First Class', 120, 7200.00),
+(26, 26, 26, 8, 'Economy', 90, 7200.00),
+(27, 27, 27, 2, 'Business', 70, 1400.00),
+(28, 28, 28, 4, 'First Class', 150, 6000.00),
+(29, 29, 29, 3, 'Economy', 50, 1500.00),
+(30, 30, 30, 5, 'Business', 110, 5500.00);
+
+
+INSERT INTO Payment (booking_id, amount, payment_method, refund_status)
+VALUES
+(1, 3500.00, 'Credit Card', FALSE),
+(2, 750.00, 'Bank Transfer', FALSE),
+(3, 2000.00, 'Loyalty Points', FALSE),
+(4, 15000.00, 'Credit Card', TRUE),
+(5, 3200.00, 'Bank Transfer', FALSE),
+(6, 3500.00, 'Loyalty Points', FALSE),
+(7, 5600.00, 'Credit Card', TRUE),
+(8, 1100.00, 'Bank Transfer', FALSE),
+(9, 3500.00, 'Loyalty Points', FALSE),
+(10, 6300.00, 'Credit Card', TRUE),
+(11, 1050.00, 'Bank Transfer', FALSE),
+(12, 4900.00, 'Loyalty Points', FALSE),
+(13, 2800.00, 'Credit Card', TRUE),
+(14, 1500.00, 'Bank Transfer', FALSE),
+(15, 3000.00, 'Loyalty Points', FALSE),
+(16, 8800.00, 'Credit Card', TRUE),
+(17, 1200.00, 'Bank Transfer', FALSE),
+(18, 4500.00, 'Loyalty Points', TRUE),
+(19, 5000.00, 'Credit Card', FALSE),
+(20, 3200.00, 'Bank Transfer', FALSE),
+(21, 7800.00, 'Loyalty Points', FALSE),
+(22, 5000.00, 'Credit Card', TRUE),
+(23, 1800.00, 'Bank Transfer', FALSE),
+(24, 3500.00, 'Loyalty Points', FALSE),
+(25, 7200.00, 'Credit Card', TRUE),
+(26, 7200.00, 'Bank Transfer', FALSE),
+(27, 1400.00, 'Loyalty Points', FALSE),
+(28, 6000.00, 'Credit Card', TRUE),
+(29, 1500.00, 'Bank Transfer', FALSE),
+(30, 5500.00, 'Loyalty Points', FALSE);
+
+INSERT INTO Feedback (booking_id, customer_id, feedback_type, rating, comments)
+VALUES
+(1, 1, 'Overall', 5, 'Great experience! Very satisfied with my booking.'),
+(2, 2, 'Flight', 4, 'Comfortable flight but food could be better.'),
+(3, 3, 'Accommodation', 5, 'Amazing service and beautiful room.'),
+(4, 4, 'Flight', 3, 'Flight was delayed, but everything else was fine.'),
+(5, 5, 'Transfer', 5, 'Excellent transfer service, very punctual.'),
+(6, 6, 'Accommodation', 4, 'Room was fine, but the view was not as expected.'),
+(7, 7, 'Flight', 5, 'First-class service was outstanding!'),
+(8, 8, 'Transfer', 3, 'Transfer was okay, but the driver was late.'),
+(9, 9, 'Overall', 5, 'Fantastic experience, would definitely book again!'),
+(10, 10, 'Accommodation', 4, 'Great place, but the check-in process was slow.'),
+(11, 11, 'Flight', 4, 'Nice flight, but the seats were cramped.'),
+(12, 12, 'Overall', 5, 'Perfect trip, everything went smoothly.'),
+(13, 13, 'Accommodation', 3, 'The room was not as advertised, but it was clean.'),
+(14, 14, 'Transfer', 4, 'Good service, but the car was not very clean.'),
+(15, 15, 'Flight', 5, 'Absolutely fantastic flight experience.'),
+(16, 16, 'Accommodation', 4, 'The amenities were great, but the price was high.'),
+(17, 17, 'Transfer', 5, 'Smooth transfer and very polite driver.'),
+(18, 18, 'Overall', 3, 'Some minor issues, but overall a pleasant stay.'),
+(19, 19, 'Accommodation', 4, 'Nice room, but the wifi was slow.'),
+(20, 20, 'Flight', 5, 'First-class flight, very comfortable.'),
+(21, 21, 'Transfer', 3, 'The transfer was too short, I wish it was longer.'),
+(22, 22, 'Accommodation', 4, 'Beautiful place, but too many stairs.'),
+(23, 23, 'Overall', 5, 'Wonderful experience, will return!'),
+(24, 24, 'Flight', 4, 'Good flight, but the entertainment system failed.'),
+(25, 25, 'Accommodation', 5, 'Excellent stay, very luxurious.'),
+(26, 26, 'Transfer', 4, 'Good service, but driver could have been friendlier.'),
+(27, 27, 'Overall', 4, 'Had a great time, but minor inconveniences.'),
+(28, 28, 'Accommodation', 5, 'Absolutely stunning place!'),
+(29, 29, 'Flight', 3, 'Flight was delayed, but good service overall.'),
+(30, 30, 'Transfer', 4, 'Punctual transfer, but not the most comfortable ride.');
